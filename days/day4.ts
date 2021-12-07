@@ -12,8 +12,6 @@ export class Day4 extends Day {
     this.numberOrder = fileDoubleBreaks.shift()?.split(",").map(value => +value) || [];
     let boardStrings = fileDoubleBreaks;
     this.boards = boardStrings.map(boardString => boardString.split("\n").map(row => row.trim().split(/\s+/i).map(value => +value))).map(board => new BingoBoard(board));
-    //console.log(this.boards);
-    //console.log(this.numberOrder);
   }
 
 
