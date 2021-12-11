@@ -1,7 +1,7 @@
 
-import { Day9 } from "./days/day9";
+import { Day10 } from "./days/day10";
 
-let day = new Day9("./inputs/input9.txt");
+let day = new Day10("./inputs/input10.txt");
 let start1 = process.hrtime()
 console.log(day.part1());
 let end1 = process.hrtime(start1);
