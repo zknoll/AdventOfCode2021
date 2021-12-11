@@ -36,7 +36,7 @@ export class Day10 extends Day {
         } else {
           if (!stack.length || this.closeToOpen[entry] !== stack[stack.length - 1]) {
             points = this.pointsMap[entry];
-            return true; // hi
+            return true;
           } else {
             stack.pop(); // we have matched open to close
           }
