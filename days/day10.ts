@@ -3,19 +3,12 @@ import { Day } from "../day";
 import { median } from "../helpers/arrayHelpers";
 
 export class Day10 extends Day {
-
-  PAREN_PTS = 3;
-  SQUARE_PTS = 57;
-  CURLY_PTS = 1197;
-  ANGLE_PTS = 25137;
-
   pointsMap: any = {
-    ")": this.PAREN_PTS,
-    "]": this.SQUARE_PTS,
-    "}": this.CURLY_PTS,
-    ">": this.ANGLE_PTS
+    ")": 3,
+    "]": 57,
+    "}": 1197,
+    ">": 25137
   }
-
   autoPointsMap: any = {
     ")": 1,
     "]": 2,
@@ -23,7 +16,7 @@ export class Day10 extends Day {
     ">": 4
   }
 
-  openingChars = new Set(["(", "[", "{", "<"]);
+  openingChars = new Set("([{<".split(""));
   closingChars = new Set(")]}>".split(""));
   closeToOpen: any = {
     ")": "(",
@@ -33,26 +26,24 @@ export class Day10 extends Day {
   };
 
   override part1 = () => {
-      const rows = this.inputLines.map(row => row.trim().split(""));
-      let score = 0;
-      return rows.map(row => {
-        let stack: string[] = [];
-        let points = 0;
-        row.some((entry, i) => {
-          if (this.openingChars.has(entry)) {
-            stack.push(entry);
+    const rows = this.inputLines.map(row => row.trim().split(""));
+    return rows.map(row => {
+      let stack: string[] = [];
+      let points = 0;
+      row.some((entry) => {
+        if (this.openingChars.has(entry)) {
+          stack.push(entry);
+        } else {
+          if (!stack.length || this.closeToOpen[entry] !== stack[stack.length - 1]) {
+            points = this.pointsMap[entry];
+            return true; // hi
           } else {
-            if (!stack.length || this.closeToOpen[entry] !== stack[stack.length - 1]) {
-              points = this.pointsMap[entry];
-              return true; // hi
-            } else {
-              stack.pop(); // we have matched open to close
-            }
+            stack.pop(); // we have matched open to close
           }
-        });
-        return points;
-      }).reduce((acc, b) => acc + b)
-      return score;
+        }
+      });
+      return points;
+    }).reduce((acc, b) => acc + b)
   }
 
   override part2 = () => {
