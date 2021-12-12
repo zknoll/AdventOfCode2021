@@ -3,19 +3,19 @@ import { getEnabledCategories } from "trace_events";
 import { Day } from "../day";
 
 export class Day12 extends Day {
-
   parseInput(): Array<Vertex> {
     let input = this.inputLines.map(row => row.split("-"));
     // initialize the vertices first
     let vertices = [...new Set(input.flat())].map(x => new Vertex(x));
     // now add edges
     input.forEach(conn => {
-      vertices.find(v => v.index === conn[0])!.connectVertex(vertices.find(v => v.index === conn[1])!);
-      vertices.find(v => v.index === conn[1])!.connectVertex(vertices.find(v => v.index === conn[0])!);
+      vertices.find(v => v.index === conn[0])!.connectedVertices.push(vertices.find(v => v.index === conn[1])!);
+      vertices.find(v => v.index === conn[1])!.connectedVertices.push(vertices.find(v => v.index === conn[0])!);
     })
     // and remove orphans
     return vertices.filter(v => !v.isOrphaned())
   }
+
   override part1: () => any = () => {
     const vertices = this.parseInput();
     const start = vertices.find(v => v.index === "start")!;
@@ -32,7 +32,7 @@ export class Day12 extends Day {
     const start = vertices.find(v => v.index === "start")!;
     const end   = vertices.find(v => v.index === "end")!;
     const graph = new Graph(vertices);
-    graph.findAllPaths2(start, end, []);
+    graph.findAllPaths2(start, end);
     console.log(`Found ${graph.paths2.size} paths from start to end`)
     return graph.paths2.size;
   };
@@ -46,15 +46,13 @@ class Graph {
   paths2: Set<String> = new Set();
 
   findAllPaths(a: Vertex, b: Vertex, currentPath: Array<Vertex>) {
-    //console.log(`Traversing ${a.index} to ${b.index}!`)
     currentPath.push(a);
     if (a === b) {
-      //console.log(`Found path = ${currentPath.map(v => v.index)}`)
+      console.log(`Found path = ${currentPath.map(v => v.index)}`)
       this.paths.push(new Array(...currentPath));
       currentPath.pop();
       return;
     }
-    //a.connectedVertices.filter(cv => !currentPath.find(entry => entry !== cv))
     a.connectedVertices.forEach(cv => {
       if (cv.isLarge ||
         (!cv.isSmallPlus && !currentPath.find(v => v === cv)) ||
@@ -66,9 +64,9 @@ class Graph {
     currentPath.pop();
   }
 
-  findAllPaths2(a: Vertex, b: Vertex, currentPath: Array<Vertex>) {
+  findAllPaths2(a: Vertex, b: Vertex) {
     this.vertices.filter(v => !v.isLarge && v.index !== "start" && v.index !== "end").forEach(smallV => {
-      smallV.isSmallPlus = true; // promote to "Large"
+      smallV.isSmallPlus = true; // promote to "Small Plus"
       this.findAllPaths(a, b, []);
       smallV.isSmallPlus = false;
     });
@@ -84,10 +82,6 @@ class Vertex {
   constructor (index: string) {
     this.index = index;
     this.isLarge = index.match(/[a-z]+/) === null;
-  }
-
-  connectVertex(v: Vertex) {
-    this.connectedVertices.push(v)
   }
 
   isOrphaned(): boolean {
