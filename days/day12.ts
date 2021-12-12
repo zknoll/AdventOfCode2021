@@ -1,9 +1,7 @@
-import path from "path/posix";
-import { getEnabledCategories } from "trace_events";
 import { Day } from "../day";
 
 export class Day12 extends Day {
-  parseInput(): Array<Vertex> {
+  parseInput(): Graph {
     let input = this.inputLines.map(row => row.split("-"));
     // initialize the vertices first
     let vertices = [...new Set(input.flat())].map(x => new Vertex(x));
@@ -13,27 +11,22 @@ export class Day12 extends Day {
       vertices.find(v => v.index === conn[1])!.connectedVertices.push(vertices.find(v => v.index === conn[0])!);
     })
     // and remove orphans
-    return vertices.filter(v => !v.isOrphaned())
+    return new Graph(vertices);
   }
 
   override part1: () => any = () => {
-    const vertices = this.parseInput();
-    const start = vertices.find(v => v.index === "start")!;
-    const end   = vertices.find(v => v.index === "end")!;
-    vertices.forEach(v => v.connectedVertices.forEach(cv => console.log(`${v.index} connects to ${cv.index}`)))
-    const graph = new Graph(vertices);
+    const graph = this.parseInput();
+    const start = graph.vertices.find(v => v.index === "start")!;
+    const end   = graph.vertices.find(v => v.index === "end")!;
     graph.findAllPaths(start, end, []);
-    console.log(`Found ${graph.paths.length} paths from start to end`)
     return graph.paths.length;
   };
 
   override part2: () => any = () => {
-    const vertices = this.parseInput();
-    const start = vertices.find(v => v.index === "start")!;
-    const end   = vertices.find(v => v.index === "end")!;
-    const graph = new Graph(vertices);
+    const graph = this.parseInput();
+    const start = graph.vertices.find(v => v.index === "start")!;
+    const end   = graph.vertices.find(v => v.index === "end")!;
     graph.findAllPaths2(start, end);
-    console.log(`Found ${graph.paths2.size} paths from start to end`)
     return graph.paths2.size;
   };
 }
@@ -82,9 +75,5 @@ class Vertex {
   constructor (index: string) {
     this.index = index;
     this.isLarge = index.match(/[a-z]+/) === null;
-  }
-
-  isOrphaned(): boolean {
-    return !this.isLarge && this.connectedVertices.length === 1 && !this.connectedVertices[0]?.isLarge
   }
 }
