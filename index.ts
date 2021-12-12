@@ -115,11 +115,32 @@ switch(+process.env.DAY!) {
     day = new Day1("./inputs/test.txt");
 }
 
+console.log("");
+console.log("");
+console.log("-------------------");
+console.log("EXECUTING PART 1...");
+console.log("-------------------");
+console.log("");
 let start1 = process.hrtime();
-console.log(day.part1());
+let result1 = day.part1();
 let end1 = process.hrtime(start1);
 console.log(`${end1[0] + end1[1]/1000000000} seconds`);
+
+console.log("");
+console.log("");
+console.log("-------------------");
+console.log("EXECUTING PART 2...");
+console.log("-------------------");
+console.log("");
 let start2 = process.hrtime();
-console.log(day.part2());
+let result2 = day.part2();
 let end2 = process.hrtime(start2);
 console.log(`${end2[0] + end2[1]/1000000000} seconds`);
+
+console.log("-------------------");
+console.log(`Part 1 Answer: ${result1}`)
+console.log(`Part 2 Answer: ${result2}`)
+console.log(`Part 1 executed in ${end1[0] + end1[1]/1000000000} seconds`);
+console.log(`Part 2 executed in ${end2[0] + end2[1]/1000000000} seconds`);
+
+
